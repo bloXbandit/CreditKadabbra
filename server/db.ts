@@ -477,3 +477,206 @@ export async function deleteScoreGoal(id: number) {
   
   return await db.delete(scoreGoals).where(eq(scoreGoals.id, id));
 }
+
+// ============ Alternative Bureau Operations ============
+
+import {
+  alternativeBureaus, InsertAlternativeBureau,
+  userAlternativeReports, InsertUserAlternativeReport,
+  alternativeBureauDisputes, InsertAlternativeBureauDispute,
+  optOutTracker, InsertOptOutTracker,
+  securityFreezeTracker, InsertSecurityFreezeTracker,
+  liveAccounts, InsertLiveAccount,
+  legalCitations, InsertLegalCitation,
+  creditReportErrors, InsertCreditReportError,
+  disputeLetterTemplates, InsertDisputeLetterTemplate
+} from "../drizzle/schema";
+
+export async function getAllAlternativeBureaus() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(alternativeBureaus);
+}
+
+export async function createAlternativeBureau(bureau: InsertAlternativeBureau) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(alternativeBureaus).values(bureau);
+  return result;
+}
+
+export async function getUserAlternativeReports(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(userAlternativeReports).where(eq(userAlternativeReports.userId, userId));
+}
+
+export async function createUserAlternativeReport(report: InsertUserAlternativeReport) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(userAlternativeReports).values(report);
+  return result;
+}
+
+export async function updateUserAlternativeReport(id: number, updates: Partial<InsertUserAlternativeReport>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(userAlternativeReports).set(updates).where(eq(userAlternativeReports.id, id));
+}
+
+export async function getUserAlternativeBureauDisputes(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(alternativeBureauDisputes).where(eq(alternativeBureauDisputes.userId, userId));
+}
+
+export async function createAlternativeBureauDispute(dispute: InsertAlternativeBureauDispute) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(alternativeBureauDisputes).values(dispute);
+  return result;
+}
+
+export async function updateAlternativeBureauDispute(id: number, updates: Partial<InsertAlternativeBureauDispute>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(alternativeBureauDisputes).set(updates).where(eq(alternativeBureauDisputes.id, id));
+}
+
+export async function getUserOptOuts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(optOutTracker).where(eq(optOutTracker.userId, userId));
+}
+
+export async function createOptOut(optOut: InsertOptOutTracker) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(optOutTracker).values(optOut);
+  return result;
+}
+
+export async function updateOptOut(id: number, updates: Partial<InsertOptOutTracker>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(optOutTracker).set(updates).where(eq(optOutTracker.id, id));
+}
+
+export async function getUserSecurityFreezes(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(securityFreezeTracker).where(eq(securityFreezeTracker.userId, userId));
+}
+
+export async function createSecurityFreeze(freeze: InsertSecurityFreezeTracker) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(securityFreezeTracker).values(freeze);
+  return result;
+}
+
+export async function updateSecurityFreeze(id: number, updates: Partial<InsertSecurityFreezeTracker>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(securityFreezeTracker).set(updates).where(eq(securityFreezeTracker.id, id));
+}
+
+// ============ Live Account Operations ============
+
+export async function getUserLiveAccounts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(liveAccounts).where(eq(liveAccounts.userId, userId));
+}
+
+export async function createLiveAccount(account: InsertLiveAccount) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(liveAccounts).values(account);
+  return result;
+}
+
+export async function updateLiveAccount(id: number, updates: Partial<InsertLiveAccount>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(liveAccounts).set(updates).where(eq(liveAccounts.id, id));
+}
+
+export async function deleteLiveAccount(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(liveAccounts).where(eq(liveAccounts.id, id));
+}
+
+// ============ Legal Citation Operations ============
+
+export async function getAllLegalCitations() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(legalCitations);
+}
+
+export async function getLegalCitationsByCategory(errorCategory: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(legalCitations).where(eq(legalCitations.errorCategory, errorCategory));
+}
+
+export async function createLegalCitation(citation: InsertLegalCitation) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(legalCitations).values(citation);
+  return result;
+}
+
+// ============ Credit Report Error Operations ============
+
+export async function getUserCreditReportErrors(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(creditReportErrors).where(eq(creditReportErrors.userId, userId));
+}
+
+export async function getUnresolvedErrors(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(creditReportErrors)
+    .where(and(
+      eq(creditReportErrors.userId, userId),
+      eq(creditReportErrors.resolved, false)
+    ));
+}
+
+export async function createCreditReportError(error: InsertCreditReportError) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(creditReportErrors).values(error);
+  return result;
+}
+
+export async function updateCreditReportError(id: number, updates: Partial<InsertCreditReportError>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(creditReportErrors).set(updates).where(eq(creditReportErrors.id, id));
+}
+
+// ============ Dispute Letter Template Operations ============
+
+export async function getAllDisputeLetterTemplates() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(disputeLetterTemplates);
+}
+
+export async function getDisputeLetterTemplateByErrorType(errorType: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(disputeLetterTemplates).where(eq(disputeLetterTemplates.errorType, errorType));
+}
+
+export async function createDisputeLetterTemplate(template: InsertDisputeLetterTemplate) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(disputeLetterTemplates).values(template);
+  return result;
+}

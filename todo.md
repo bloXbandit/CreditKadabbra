@@ -88,3 +88,152 @@
 - [x] Write vitest tests for Wayfinder calculations
 - [ ] Write vitest tests for document operations
 - [ ] Create project checkpoint for deployment
+
+## Legal-Backed Credit Repair Enhancement
+
+### Research & Legal Framework
+- [ ] Research Maryland Consumer Credit Reporting Agencies Act (14-1201)
+- [ ] Research federal FCRA (Fair Credit Reporting Act) violations
+- [ ] Research FDCPA (Fair Debt Collection Practices Act) violations
+- [ ] Compile legal citations database for common credit report errors
+- [ ] Document Metro2 format violations and reporting standards
+- [ ] Research state-specific credit reporting laws beyond Maryland
+
+### Credit Report Parsing & Error Detection
+- [ ] Build credit report file upload system (PDF, text, images)
+- [ ] Implement OCR for scanned credit reports
+- [ ] Parse credit report data into structured format
+- [ ] Build automated error detection engine for:
+  - [ ] Incorrect account status
+  - [ ] Wrong balance amounts
+  - [ ] Inaccurate payment history
+  - [ ] Duplicate accounts
+  - [ ] Accounts beyond statute of limitations
+  - [ ] Unauthorized inquiries
+  - [ ] Identity information errors
+  - [ ] Metro2 format violations
+- [ ] Create error severity scoring system
+- [ ] Generate error summary report with legal backing
+
+### Intelligent Dispute Letter Generator
+- [ ] Build dispute letter template system with legal citations
+- [ ] Create letter customization wizard
+- [ ] Implement automatic legal citation insertion based on error type
+- [ ] Add Maryland-specific consumer rights language
+- [ ] Build FCRA violation letter templates
+- [ ] Create method of verification (MOV) request templates
+- [ ] Add debt validation letter templates
+- [ ] Implement letter preview and editing interface
+- [ ] Add PDF export for dispute letters
+- [ ] Create certified mail tracking integration
+
+### Legal Citation Database
+- [ ] Build database schema for legal citations
+- [ ] Populate with Maryland Commercial Law Article 14-1201 citations
+- [ ] Add FCRA 15 USC 1681 citations
+- [ ] Add FDCPA 15 USC 1692 citations
+- [ ] Link citations to specific error types
+- [ ] Create citation search and filtering system
+
+## Alternative Credit Bureau Management
+
+### LexisNexis Risk Solutions
+- [ ] Research LexisNexis consumer reporting (RiskView, Accurint)
+- [ ] Build opt-out and dispute process for LexisNexis
+- [ ] Create LexisNexis report request interface
+- [ ] Add LexisNexis-specific dispute letter templates
+- [ ] Track LexisNexis dispute status
+
+### SageStream (formerly Credco)
+- [ ] Research SageStream consumer reporting
+- [ ] Build opt-out and dispute process for SageStream
+- [ ] Create SageStream report request interface
+- [ ] Add SageStream-specific dispute letter templates
+- [ ] Track SageStream dispute status
+
+### Innovis
+- [ ] Research Innovis consumer reporting (4th major bureau)
+- [ ] Build opt-out and dispute process for Innovis
+- [ ] Create Innovis report request interface
+- [ ] Add Innovis-specific dispute letter templates
+- [ ] Track Innovis dispute status
+
+### Other Alternative Bureaus
+- [ ] Research CoreLogic (rental/tenant screening)
+- [ ] Research ChexSystems (banking/checking account history)
+- [ ] Research Clarity Services (alternative financial services)
+- [ ] Build unified alternative bureau dashboard
+- [ ] Create bulk dispute submission across all bureaus
+
+## Live Account Tracking Dashboard
+
+### Account Management Interface
+- [ ] Design cute/modern live accounts dashboard
+- [ ] Build credit card tracker with:
+  - [ ] Card name and issuer
+  - [ ] Current balance
+  - [ ] Credit limit
+  - [ ] Utilization percentage
+  - [ ] Statement date
+  - [ ] Payment due date
+  - [ ] Minimum payment amount
+  - [ ] APR/interest rate
+- [ ] Build installment loan tracker with:
+  - [ ] Loan type (auto, personal, student)
+  - [ ] Current balance
+  - [ ] Original amount
+  - [ ] Monthly payment
+  - [ ] Payment due date
+  - [ ] Interest rate
+  - [ ] Remaining term
+- [ ] Build mortgage tracker with:
+  - [ ] Property address
+  - [ ] Current balance
+  - [ ] Original amount
+  - [ ] Monthly payment (P&I, escrow)
+  - [ ] Interest rate
+  - [ ] Remaining term
+  - [ ] Estimated home value
+
+### Smart Features
+- [ ] Auto-import accounts from uploaded credit reports
+- [ ] Manual account entry interface
+- [ ] Payment reminders and notifications
+- [ ] Utilization alerts (when cards exceed 30%)
+- [ ] Visual progress bars for paydown
+- [ ] Total debt summary with breakdown
+- [ ] Monthly payment calendar view
+- [ ] Account status indicators (current, late, closed)
+
+### Visual Design
+- [ ] Card-based layout with icons
+- [ ] Color-coded utilization (green <30%, yellow 30-50%, red >50%)
+- [ ] Quick-add floating action button
+- [ ] Swipe actions for edit/delete
+- [ ] Animated balance updates
+- [ ] Confetti animation when accounts paid off
+
+
+## Phase 2 Progress (Legal-Backed Features)
+- [x] Design and implement alternative bureau database schema
+- [x] Design and implement live accounts database schema
+- [x] Design and implement legal citations database schema
+- [x] Design and implement credit report errors database schema
+- [x] Design and implement dispute letter templates schema
+- [x] Create database query helpers for all new tables
+- [x] Seed legal citations database (17 citations: FCRA, Maryland, Metro 2)
+- [x] Seed dispute letter templates (6 templates)
+- [x] Seed alternative bureaus data (6 bureaus)
+- [x] Build tRPC procedures for alternative bureaus
+- [x] Build tRPC procedures for opt-out tracker
+- [x] Build tRPC procedures for security freeze tracker
+- [x] Build tRPC procedures for live accounts
+- [x] Build tRPC procedures for legal citations
+- [x] Build tRPC procedures for credit report errors
+- [x] Build tRPC procedures for dispute letter templates
+- [ ] Implement frontend pages for all new features
+- [ ] Create live account tracker UI
+- [ ] Create alternative bureau dashboard
+- [ ] Create dispute wizard with legal backing
+- [ ] Create credit report upload and parsing
+- [ ] Test all new features end-to-end

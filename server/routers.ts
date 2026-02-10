@@ -531,6 +531,337 @@ export const appRouter = router({
         return await db.deleteScoreGoal(input.id);
       }),
   }),
+  // Alternative Bureaus
+  alternativeBureaus: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllAlternativeBureaus();
+    }),
+    reports: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserAlternativeReports(ctx.user.id);
+    }),
+    requestReport: protectedProcedure
+      .input(z.object({
+        bureauId: z.number(),
+        requestDate: z.string(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createUserAlternativeReport({
+          userId: ctx.user.id,
+          bureauId: input.bureauId,
+          requestDate: input.requestDate as any,
+          status: "requested",
+          notes: input.notes,
+        });
+      }),
+    updateReport: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        receivedDate: z.string().optional(),
+        status: z.enum(["requested", "received", "reviewed"]).optional(),
+        fileUrl: z.string().optional(),
+        fileKey: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const updateData: any = {};
+        if (updates.receivedDate) updateData.receivedDate = updates.receivedDate;
+        if (updates.status) updateData.status = updates.status;
+        if (updates.fileUrl) updateData.fileUrl = updates.fileUrl;
+        if (updates.fileKey) updateData.fileKey = updates.fileKey;
+        if (updates.notes) updateData.notes = updates.notes;
+        await db.updateUserAlternativeReport(id, updateData);
+        return { success: true };
+      }),
+    disputes: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserAlternativeBureauDisputes(ctx.user.id);
+    }),
+    createDispute: protectedProcedure
+      .input(z.object({
+        bureauId: z.number(),
+        disputeDate: z.string(),
+        description: z.string(),
+        letterContent: z.string().optional(),
+        status: z.enum(["draft", "submitted", "investigating", "resolved", "rejected"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createAlternativeBureauDispute({
+          userId: ctx.user.id,
+          bureauId: input.bureauId,
+          disputeDate: input.disputeDate as any,
+          description: input.description,
+          letterContent: input.letterContent,
+          status: input.status || "draft",
+        });
+      }),
+    updateDispute: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["draft", "submitted", "investigating", "resolved", "rejected"]).optional(),
+        resolutionDate: z.string().optional(),
+        outcome: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const updateData: any = {};
+        if (updates.status) updateData.status = updates.status;
+        if (updates.resolutionDate) updateData.resolutionDate = updates.resolutionDate;
+        if (updates.outcome) updateData.outcome = updates.outcome;
+        if (updates.notes) updateData.notes = updates.notes;
+        await db.updateAlternativeBureauDispute(id, updateData);
+        return { success: true };
+      }),
+  }),
+
+  // Opt-Out Tracker
+  optOuts: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserOptOuts(ctx.user.id);
+    }),
+    create: protectedProcedure
+      .input(z.object({
+        bureauId: z.number().optional(),
+        bureauType: z.enum(["major", "alternative"]),
+        optOutDate: z.string(),
+        status: z.enum(["pending", "confirmed", "expired"]).optional(),
+        confirmationNumber: z.string().optional(),
+        expirationDate: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createOptOut({
+          userId: ctx.user.id,
+          bureauId: input.bureauId,
+          bureauType: input.bureauType,
+          optOutDate: input.optOutDate as any,
+          status: input.status || "pending",
+          confirmationNumber: input.confirmationNumber,
+          expirationDate: input.expirationDate as any,
+          notes: input.notes,
+        });
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["pending", "confirmed", "expired"]).optional(),
+        confirmationNumber: z.string().optional(),
+        expirationDate: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const updateData: any = {};
+        if (updates.status) updateData.status = updates.status;
+        if (updates.confirmationNumber) updateData.confirmationNumber = updates.confirmationNumber;
+        if (updates.expirationDate) updateData.expirationDate = updates.expirationDate;
+        if (updates.notes) updateData.notes = updates.notes;
+        await db.updateOptOut(id, updateData);
+        return { success: true };
+      }),
+  }),
+
+  // Security Freeze Tracker
+  freezes: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserSecurityFreezes(ctx.user.id);
+    }),
+    create: protectedProcedure
+      .input(z.object({
+        bureauId: z.number().optional(),
+        bureauType: z.enum(["major", "alternative"]),
+        freezeDate: z.string(),
+        status: z.enum(["active", "lifted_temp", "lifted_perm", "removed"]).optional(),
+        pinEncrypted: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createSecurityFreeze({
+          userId: ctx.user.id,
+          bureauId: input.bureauId,
+          bureauType: input.bureauType,
+          freezeDate: input.freezeDate as any,
+          status: input.status || "active",
+          pinEncrypted: input.pinEncrypted,
+          notes: input.notes,
+        });
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["active", "lifted_temp", "lifted_perm", "removed"]).optional(),
+        liftExpiration: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const updateData: any = {};
+        if (updates.status) updateData.status = updates.status;
+        if (updates.liftExpiration) updateData.liftExpiration = new Date(updates.liftExpiration);
+        if (updates.notes) updateData.notes = updates.notes;
+        await db.updateSecurityFreeze(id, updateData);
+        return { success: true };
+      }),
+  }),
+
+  // Live Accounts (User-Managed)
+  liveAccounts: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserLiveAccounts(ctx.user.id);
+    }),
+    create: protectedProcedure
+      .input(z.object({
+        accountName: z.string(),
+        accountType: z.enum(["credit_card", "auto_loan", "personal_loan", "student_loan", "mortgage", "other"]),
+        issuer: z.string().optional(),
+        currentBalance: z.number().optional(),
+        creditLimit: z.number().optional(),
+        originalAmount: z.number().optional(),
+        monthlyPayment: z.number().optional(),
+        minimumPayment: z.number().optional(),
+        statementDate: z.number().min(1).max(31).optional(),
+        paymentDueDate: z.number().min(1).max(31).optional(),
+        interestRate: z.number().optional(),
+        remainingTerm: z.number().optional(),
+        status: z.enum(["current", "late", "closed", "paid_off"]).optional(),
+        propertyAddress: z.string().optional(),
+        estimatedValue: z.number().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createLiveAccount({
+          userId: ctx.user.id,
+          ...input,
+          status: input.status || "current",
+        } as any);
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        accountName: z.string().optional(),
+        currentBalance: z.number().optional(),
+        creditLimit: z.number().optional(),
+        monthlyPayment: z.number().optional(),
+        minimumPayment: z.number().optional(),
+        statementDate: z.number().min(1).max(31).optional(),
+        paymentDueDate: z.number().min(1).max(31).optional(),
+        interestRate: z.number().optional(),
+        remainingTerm: z.number().optional(),
+        status: z.enum(["current", "late", "closed", "paid_off"]).optional(),
+        estimatedValue: z.number().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        await db.updateLiveAccount(id, updates as any);
+        return { success: true };
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteLiveAccount(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // Legal Citations
+  legalCitations: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllLegalCitations();
+    }),
+    byCategory: protectedProcedure
+      .input(z.object({ errorCategory: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getLegalCitationsByCategory(input.errorCategory);
+      }),
+  }),
+
+  // Credit Report Errors
+  reportErrors: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserCreditReportErrors(ctx.user.id);
+    }),
+    unresolved: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUnresolvedErrors(ctx.user.id);
+    }),
+    create: protectedProcedure
+      .input(z.object({
+        reportId: z.number().optional(),
+        errorType: z.enum([
+          "statute_of_limitations",
+          "duplicate_account",
+          "incorrect_balance",
+          "incorrect_status",
+          "incorrect_payment_history",
+          "unauthorized_inquiry",
+          "identity_error",
+          "metro2_violation",
+          "unverifiable",
+          "other"
+        ]),
+        severity: z.enum(["low", "medium", "high", "critical"]),
+        itemType: z.enum(["account", "inquiry", "public_record", "personal_info"]),
+        itemId: z.number().optional(),
+        errorDescription: z.string(),
+        suggestedAction: z.string().optional(),
+        legalCitationId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createCreditReportError({
+          userId: ctx.user.id,
+          ...input,
+          resolved: false,
+        } as any);
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        resolved: z.boolean().optional(),
+        resolvedDate: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const updateData: any = {};
+        if (updates.resolved !== undefined) updateData.resolved = updates.resolved;
+        if (updates.resolvedDate) updateData.resolvedDate = updates.resolvedDate;
+        await db.updateCreditReportError(id, updateData);
+        return { success: true };
+      }),
+  }),
+
+  // Dispute Letter Templates
+  letterTemplates: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllDisputeLetterTemplates();
+    }),
+    byErrorType: protectedProcedure
+      .input(z.object({ errorType: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getDisputeLetterTemplateByErrorType(input.errorType);
+      }),
+    generate: protectedProcedure
+      .input(z.object({
+        templateId: z.number(),
+        variables: z.record(z.string(), z.string()),
+      }))
+      .mutation(async ({ input }) => {
+        const templates = await db.getAllDisputeLetterTemplates();
+        const template = templates.find(t => t.id === input.templateId);
+        if (!template) {
+          throw new Error("Template not found");
+        }
+        
+        // Simple variable replacement
+        let letter = template.templateContent;
+        for (const [key, value] of Object.entries(input.variables)) {
+          const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
+          letter = letter.replace(regex, value);
+        }
+        
+        return { letter, template };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
