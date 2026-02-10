@@ -862,6 +862,92 @@ export const appRouter = router({
         return { letter, template };
       }),
   }),
+
+  // Live Score Calculator
+  scoreCalculator: router({
+    calculate: protectedProcedure
+      .input(z.object({
+        accounts: z.array(z.any()),
+        inquiries: z.array(z.any()).optional(),
+        publicRecords: z.array(z.any()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { calculateCreditScore } = await import('./scoreCalculator');
+        const { convertLiveAccountToAccountData } = await import('./reportParser');
+        
+        const accountData = input.accounts.map(convertLiveAccountToAccountData);
+        
+        const result = calculateCreditScore({
+          accounts: accountData,
+          inquiries: input.inquiries || [],
+          publicRecords: input.publicRecords || [],
+        });
+        
+        return result;
+      }),
+    
+    calculateFromLiveAccounts: protectedProcedure
+      .query(async ({ ctx }) => {
+        const { calculateCreditScore } = await import('./scoreCalculator');
+        const { convertLiveAccountToAccountData } = await import('./reportParser');
+        
+        const liveAccounts = await db.getUserLiveAccounts(ctx.user.id);
+        const inquiries: any[] = [];
+        const publicRecords: any[] = [];
+        
+        const accountData = liveAccounts.map(convertLiveAccountToAccountData);
+        
+        const result = calculateCreditScore({
+          accounts: accountData,
+          inquiries: inquiries || [],
+          publicRecords: publicRecords || [],
+        });
+        
+        // Store calculated score for each bureau
+        const bureaus: Array<'equifax' | 'experian' | 'transunion'> = ['equifax', 'experian', 'transunion'];
+        for (const bureau of bureaus) {
+          await db.createCreditScore({
+            userId: ctx.user.id,
+            bureau,
+            score: result.score,
+            scoreDate: new Date().toISOString() as any,
+            notes: `Calculated score based on ${accountData.length} accounts`,
+          });
+        }
+        
+        return result;
+      }),
+    
+    simulateImpact: protectedProcedure
+      .input(z.object({
+        accountChanges: z.array(z.any()).optional(),
+        inquiryChanges: z.array(z.any()).optional(),
+        publicRecordChanges: z.array(z.any()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { calculateScoreImpact } = await import('./scoreCalculator');
+        const { convertLiveAccountToAccountData } = await import('./reportParser');
+        
+        const liveAccounts = await db.getUserLiveAccounts(ctx.user.id);
+        const inquiries: any[] = [];
+        const publicRecords: any[] = [];
+        
+        const currentProfile = {
+          accounts: liveAccounts.map(convertLiveAccountToAccountData),
+          inquiries: inquiries || [],
+          publicRecords: publicRecords || [],
+        };
+        
+        const newProfile = {
+          accounts: input.accountChanges ? input.accountChanges.map(convertLiveAccountToAccountData) : currentProfile.accounts,
+          inquiries: input.inquiryChanges || currentProfile.inquiries,
+          publicRecords: input.publicRecordChanges || currentProfile.publicRecords,
+        };
+        
+        return calculateScoreImpact(currentProfile, newProfile);
+      }),
+  }),
 });
+
 
 export type AppRouter = typeof appRouter;

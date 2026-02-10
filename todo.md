@@ -237,3 +237,40 @@
 - [ ] Create dispute wizard with legal backing
 - [ ] Create credit report upload and parsing
 - [ ] Test all new features end-to-end
+
+
+## Phase 3: Live Tri-Merge Score Calculator
+- [x] Design FICO score calculation algorithm with factor weights
+- [x] Implement payment history factor calculation (35%)
+- [x] Implement credit utilization factor calculation (30%)
+- [x] Implement credit age factor calculation (15%)
+- [x] Implement credit mix factor calculation (10%)
+- [x] Implement new credit/inquiries factor calculation (10%)
+- [x] Create score calculation service in backend
+- [x] Build tri-merge score calculator (Equifax, Experian, TransUnion)
+- [x] Add score recalculation triggers on account updates
+- [x] Create score factor breakdown API endpoint
+- [ ] Build credit report parser for account extraction
+- [ ] Implement live score update system
+- [ ] Create score history tracking with snapshots
+- [ ] Build score factor visualization UI
+- [ ] Integrate live scores with Wayfinder simulator
+- [ ] Add score impact preview for all account changes
+- [ ] Create tri-merge score comparison view
+- [ ] Test score accuracy against real credit reports
+
+## Smart Quick Entry UI Features
+- [ ] Build quick-add account dialog with smart defaults
+- [ ] Implement account type auto-detection (credit card, auto loan, etc.)
+- [ ] Add keyboard shortcuts for rapid entry (Cmd+K to add account)
+- [ ] Create account templates for common creditors (Chase, Amex, Capital One)
+- [ ] Build bulk import from CSV/Excel
+- [ ] Add auto-calculation of utilization as user types balance
+- [ ] Implement smart date picker (statement date → auto-suggest due date)
+- [ ] Add inline editing for all account fields (click to edit)
+- [ ] Create duplicate account detection
+- [ ] Build account quick-edit sidebar (slide-out panel)
+- [ ] Add voice input for account entry (optional)
+- [ ] Implement auto-save (no submit button needed)
+- [ ] Create mobile-optimized entry flow
+- [ ] Add progress indicator for incomplete accounts
