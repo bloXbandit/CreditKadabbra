@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
       <div>
-        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">Credit Repair Dashboard</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">🥄 CreditKazzam 🥄</h1>
         <p className="text-sm sm:text-base text-muted-foreground">Track your credit journey and take control of your financial future</p>
       </div>
 

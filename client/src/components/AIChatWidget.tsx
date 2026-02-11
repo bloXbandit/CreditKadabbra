@@ -37,7 +37,7 @@ export default function AIChatWidget({ currentPage, context }: AIChatWidgetProps
     onSuccess: () => {
       setMessages([{
         role: "assistant",
-        content: `👋 **Hey! I'm your Credit Repair Guru.**\n\nI've got 20+ years of experience cleaning up credit reports and maximizing scores. I know FCRA inside and out, Metro 2 compliance, dispute strategies, and all the tricks to optimize your credit.\n\n**I can help you:**\n- Analyze your credit reports and find errors\n- Write powerful dispute letters with legal citations\n- Suggest which disputes to file first for maximum impact\n- Optimize your payment timing and utilization\n- Explain credit score factors in plain English\n- Guide you through Wayfinder scenarios\n\nWhat do you want to tackle first?`,
+        content: `👋 **Hey! I'm your CreditKazzam Guru.**\n\nI've got 20+ years of experience cleaning up credit reports and maximizing scores. I know FCRA inside and out, Metro 2 compliance, dispute strategies, and all the tricks to optimize your credit.\n\n**I can help you:**\n- Analyze your credit reports and find errors\n- Write powerful dispute letters with legal citations\n- Suggest which disputes to file first for maximum impact\n- Optimize your payment timing and utilization\n- Explain credit score factors in plain English\n- Guide you through Wayfinder scenarios\n\nWhat do you want to tackle first?`,
       }]);
       toast.success("Chat history cleared");
     },
@@ -122,7 +122,7 @@ export default function AIChatWidget({ currentPage, context }: AIChatWidgetProps
         setMessages([
           {
             role: "assistant",
-            content: `👋 **Hey! I'm your Credit Repair Guru.**\n\nI've got 20+ years of experience cleaning up credit reports and maximizing scores. I know FCRA inside and out, Metro 2 compliance, dispute strategies, and all the tricks to optimize your credit.\n\n**I can help you:**\n- Analyze your credit reports and find errors\n- Write powerful dispute letters with legal citations\n- Suggest which disputes to file first for maximum impact\n- Optimize your payment timing and utilization\n- Explain credit score factors in plain English\n- Guide you through Wayfinder scenarios\n\nWhat do you want to tackle first?`,
+            content: `👋 **Hey! I'm your CreditKazzam Guru.**\n\nI've got 20+ years of experience cleaning up credit reports and maximizing scores. I know FCRA inside and out, Metro 2 compliance, dispute strategies, and all the tricks to optimize your credit.\n\n**I can help you:**\n- Analyze your credit reports and find errors\n- Write powerful dispute letters with legal citations\n- Suggest which disputes to file first for maximum impact\n- Optimize your payment timing and utilization\n- Explain credit score factors in plain English\n- Guide you through Wayfinder scenarios\n\nWhat do you want to tackle first?`,
           },
         ]);
       }
@@ -169,7 +169,7 @@ export default function AIChatWidget({ currentPage, context }: AIChatWidgetProps
             <Sparkles className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">Credit Repair Guru</h3>
+            <h3 className="font-semibold text-sm">🥄 CreditKazzam Guru 🥄</h3>
             <p className="text-xs text-muted-foreground">AI-Powered Expert Assistant</p>
           </div>
         </div>
