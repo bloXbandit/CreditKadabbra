@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, FileText, TrendingUp, AlertCircle, FileCheck, Shield, CheckSquare, BarChart3, Target, Calendar } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, FileText, TrendingUp, AlertCircle, FileCheck, Shield, CheckSquare, BarChart3, Target, Calendar, Wallet } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -35,6 +35,7 @@ const menuItems = [
   { icon: Target, label: "Wayfinder", path: "/wayfinder" },
   { icon: CheckSquare, label: "Tasks", path: "/tasks" },
   { icon: Calendar, label: "Payment Calendar", path: "/payment-calendar" },
+  { icon: Wallet, label: "Live Accounts", path: "/live-accounts" },
   { icon: FileCheck, label: "Documents", path: "/documents" },
   { icon: Shield, label: "Privacy", path: "/privacy" },
   { icon: BarChart3, label: "Progress", path: "/progress" },

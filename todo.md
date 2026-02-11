@@ -314,3 +314,30 @@
 - [x] Add visual indicators for statement/due/optimal dates
 - [x] Integrate calendar with account tracker
 - [ ] Test all UI features end-to-end
+
+
+## Phase 7: Live Account Tracker Implementation
+- [x] Build account list view with filtering by type
+- [x] Create quick-add modal with smart form
+- [x] Add keyboard shortcuts (Cmd/Ctrl+K to open, Enter to save, Esc to close)
+- [x] Implement auto-calculation of utilization percentage
+- [ ] Add inline editing for balances and limits
+- [x] Create account cards with utilization bars
+- [x] Add payment date integration
+- [ ] Build bulk import from credit report
+- [x] Add account deletion with confirmation
+
+## Phase 8: Full Dispute Management UI
+- [ ] Build disputes list view with status filters
+- [ ] Create dispute creation wizard
+- [ ] Add account/item selection interface
+- [ ] Build letter template selector
+- [ ] Implement legal citation browser
+- [ ] Add citation insertion into letter
+- [ ] Create letter preview with formatting
+- [ ] Add bureau selection (Equifax, Experian, TransUnion)
+- [ ] Build dispute tracking dashboard
+- [ ] Add status update interface
+- [ ] Create outcome recording form
+- [ ] Add document attachment to disputes
+- [ ] Build dispute timeline view

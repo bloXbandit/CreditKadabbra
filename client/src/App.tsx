@@ -8,9 +8,10 @@ import DashboardLayout from "./components/DashboardLayout";
 import Home from "./pages/Home";
 import ReportUpload from "./pages/ReportUpload";
 import PaymentCalendar from "./pages/PaymentCalendar";
+import LiveAccounts from "./pages/LiveAccounts";
 import Scores from "./pages/Scores";
 import Accounts from "./pages/Accounts";
-import Disputes from "./pages/Disputes";
+import DisputesPage from "./pages/DisputesPage";
 import Wayfinder from "./pages/Wayfinder";
 import Tasks from "./pages/Tasks";
 import Documents from "./pages/Documents";
@@ -24,9 +25,10 @@ function Router() {
          <Route path={"/"} component={Home} />
       <Route path="/upload-report" component={ReportUpload} />
         <Route path="/payment-calendar" component={PaymentCalendar} />
+        <Route path="/live-accounts" component={LiveAccounts} />
       <Route path={"/404"} component={NotFound} />
         <Route path={"/accounts"} component={Accounts} />
-        <Route path={"/disputes"} component={Disputes} />
+        <Route path="/disputes" component={DisputesPage} />
         <Route path={"/wayfinder"} component={Wayfinder} />
         <Route path={"/tasks"} component={Tasks} />
         <Route path={"/documents"} component={Documents} />
