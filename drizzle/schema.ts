@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, date, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -45,6 +45,7 @@ export const creditReports = mysqlTable("credit_reports", {
   fileUrl: text("fileUrl"),
   fileKey: text("fileKey"),
   parsed: boolean("parsed").default(false).notNull(),
+  parsedData: json("parsedData"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -69,6 +70,16 @@ export const accounts = mysqlTable("accounts", {
   openDate: date("openDate"),
   lastPaymentDate: date("lastPaymentDate"),
   statementDate: date("statementDate"),
+  dateClosed: date("dateClosed"),
+  highBalance: decimal("highBalance", { precision: 12, scale: 2 }),
+  monthlyPayment: decimal("monthlyPayment", { precision: 12, scale: 2 }),
+  loanType: varchar("loanType", { length: 100 }),
+  responsibility: varchar("responsibility", { length: 100 }),
+  creditorAddress: text("creditorAddress"),
+  creditorPhone: varchar("creditorPhone", { length: 50 }),
+  remarks: text("remarks"),
+  paymentHistory: json("paymentHistory"),
+  isNegative: boolean("isNegative").default(false).notNull(),
   isDisputed: boolean("isDisputed").default(false).notNull(),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

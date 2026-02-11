@@ -36,6 +36,13 @@
       "when": 1770779514933,
       "tag": "0004_tough_raza",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1770821713298,
+      "tag": "0005_fearless_paladin",
+      "breakpoints": true
     }
   ]
 }

@@ -452,3 +452,33 @@
 - [x] User notification preferences UI (enable/disable by type, frequency settings)
 - [x] Email template system with personalized content
 - [x] Test notification delivery and scheduling
+
+
+## Phase 16: Enhanced Report Parser & Dispute Letter Generator
+- [ ] Enhance TransUnion report parser to extract structured data from PDF
+- [ ] Parse personal information (name, addresses, phone, employers)
+- [ ] Parse account details (creditor, balance, dates, payment history)
+- [ ] Extract negative items with brackets notation (>Charge-off<, etc.)
+- [ ] Parse payment history tables (monthly ratings: OK, 30, 60, 90, C/O)
+- [ ] Identify all remark codes (CLA, CLO, COL, CBL, FCL, etc.)
+- [ ] Build dispute letter generator with multiple templates
+- [ ] Create dispute letter templates (inaccuracy, validation, goodwill)
+- [ ] Auto-populate dispute letters with extracted report data
+- [ ] Add report upload UI with PDF processing
+- [ ] Add dispute letter generation UI with preview
+- [ ] Store parsed reports and generated letters in database
+- [ ] Test report parsing with sample TransUnion PDF
+- [ ] Fix logo grey background border issue
+
+
+## Phase 16: Enhanced Report Parser & Dispute Letter Generator
+- [x] TransUnion PDF parser with pdftotext extraction
+- [x] Parse personal info, accounts, payment history, inquiries
+- [x] Identify negative items automatically
+- [x] Dispute letter generator with 5 letter types (inaccuracy, validation, goodwill, identity theft, mixed file)
+- [x] Bureau-specific templates with FCRA citations
+- [x] tRPC endpoints for letter generation
+- [x] UI for dispute letter generator with form builder
+- [x] Copy and download generated letters
+- [x] New logo without grey background generated
+- [x] Menu item added to sidebar navigation

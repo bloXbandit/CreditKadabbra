@@ -246,34 +246,71 @@ export const appRouter = router({
       }),
     generateLetter: protectedProcedure
       .input(z.object({
+        userInfo: z.object({
+          name: z.string(),
+          address: z.string(),
+          city: z.string(),
+          state: z.string(),
+          zip: z.string(),
+          ssn: z.string().optional(),
+          dateOfBirth: z.string().optional(),
+        }),
         bureau: z.enum(["equifax", "experian", "transunion"]),
-        itemType: z.enum(["account", "inquiry", "public_record", "personal_info"]),
-        disputeReason: z.string(),
-        accountName: z.string().optional(),
+        items: z.array(z.object({
+          type: z.enum(["account", "inquiry", "public_record", "personal_info"]),
+          description: z.string(),
+          accountNumber: z.string().optional(),
+          creditorName: z.string().optional(),
+          reason: z.string(),
+        })),
+        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file"]),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateDisputeLetter } = await import('./disputeLetterGenerator');
+        const letterContent = generateDisputeLetter(input);
+        return { letterContent };
+      }),
+    generateFromReport: protectedProcedure
+      .input(z.object({
+        reportId: z.number(),
+        userInfo: z.object({
+          name: z.string(),
+          address: z.string(),
+          city: z.string(),
+          state: z.string(),
+          zip: z.string(),
+          ssn: z.string().optional(),
+          dateOfBirth: z.string().optional(),
+        }),
+        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file"]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Generate dispute letter template
-        const bureauAddresses: Record<string, string> = {
-          equifax: "Equifax Information Services LLC\nP.O. Box 740256\nAtlanta, GA 30374",
-          experian: "Experian\nP.O. Box 4500\nAllen, TX 75013",
-          transunion: "TransUnion LLC\nConsumer Dispute Center\nP.O. Box 2000\nChester, PA 19016",
-        };
-
-        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        
-        let letter = `${today}\n\n${bureauAddresses[input.bureau]}\n\nRe: Request for Investigation of Inaccurate Information\n\nDear Sir or Madam,\n\n`;
-        letter += `I am writing to dispute the following information in my credit file. The items I dispute are inaccurate and incomplete.\n\n`;
-        
-        if (input.accountName) {
-          letter += `Account: ${input.accountName}\n`;
+        // Get all reports for user and find the one requested
+        const reports = await db.getCreditReportsByUser(ctx.user.id);
+        const report = reports.find((r: any) => r.id === input.reportId);
+        if (!report) {
+          throw new Error('Report not found');
         }
-        letter += `Reason for dispute: ${input.disputeReason}\n\n`;
         
-        letter += `I am requesting that the item be removed or corrected to reflect the accurate information. Enclosed are copies of supporting documents.\n\n`;
-        letter += `Please investigate this matter and delete or correct the disputed item as soon as possible.\n\n`;
-        letter += `Sincerely,\n\n${ctx.user.name || '[Your Name]'}\n`;
+        // Get all accounts for user and filter by reportId
+        const allAccounts = await db.getAccountsByUser(ctx.user.id);
+        const reportAccounts = allAccounts.filter((acc: any) => acc.reportId === input.reportId);
+        const negativeAccounts = reportAccounts.filter((acc: any) => acc.isNegative);
         
-        return { letterContent: letter };
+        const { generateDisputeLetterFromReport } = await import('./disputeLetterGenerator');
+        const letterContent = generateDisputeLetterFromReport(
+          input.userInfo,
+          report.bureau,
+          negativeAccounts.map((acc: any) => ({
+            accountName: acc.accountName,
+            accountNumber: acc.accountNumber || undefined,
+            paymentStatus: acc.paymentStatus || undefined,
+            isNegative: acc.isNegative,
+          })),
+          input.letterType || 'inaccuracy'
+        );
+        
+        return { letterContent, negativeItemsCount: negativeAccounts.length };
       }),
   }),
 

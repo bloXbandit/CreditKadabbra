@@ -19,6 +19,7 @@ import Privacy from "./pages/Privacy";
 import AlternativeBureaus from "./pages/AlternativeBureaus";
 import Progress from "./pages/Progress";
 import NotificationSettings from "./pages/NotificationSettings";
+import { DisputeLetterGenerator } from "./pages/DisputeLetterGenerator";
 
 function Router() {
   return (
@@ -38,6 +39,7 @@ function Router() {
         <Route path="/alternative-bureaus" component={AlternativeBureaus} />
         <Route path={"/progress"} component={Progress} />
         <Route path="/notifications" component={NotificationSettings} />
+        <Route path="/dispute-letter-generator" component={DisputeLetterGenerator} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
