@@ -1066,10 +1066,39 @@ export const appRouter = router({
           });
         
         return calculateAllPaymentDates(accountsWithDates);
+         }),
+  }),
+
+  // AI Assistant
+  ai: router({
+    chat: protectedProcedure
+      .input(z.object({
+        messages: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+        })),
+        context: z.object({
+          page: z.string(),
+          userScores: z.object({
+            equifax: z.number().optional(),
+            experian: z.number().optional(),
+            transunion: z.number().optional(),
+          }).optional(),
+          accounts: z.array(z.any()).optional(),
+          disputes: z.array(z.any()).optional(),
+          errors: z.array(z.any()).optional(),
+        }),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { chatWithCreditGuru } = await import("./aiAssistant");
+        
+        const response = await chatWithCreditGuru(
+          input.messages.map(m => ({ role: m.role, content: m.content })),
+          input.context
+        );
+        
+        return { message: response };
       }),
   }),
 });
-
-
-
 export type AppRouter = typeof appRouter;
