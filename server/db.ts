@@ -13,7 +13,8 @@ import {
   privacyActions, InsertPrivacyAction,
   wayfinderScenarios, InsertWayfinderScenario,
   milestones, InsertMilestone,
-  scoreGoals, InsertScoreGoal
+  scoreGoals, InsertScoreGoal,
+  chatMessages, InsertChatMessage
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -679,4 +680,34 @@ export async function createDisputeLetterTemplate(template: InsertDisputeLetterT
   if (!db) throw new Error("Database not available");
   const result = await db.insert(disputeLetterTemplates).values(template);
   return result;
+}
+
+
+// ============ Chat Message Operations ============
+
+export async function saveChatMessage(message: InsertChatMessage) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.insert(chatMessages).values(message);
+  return result;
+}
+
+export async function getUserChatHistory(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(chatMessages)
+    .where(eq(chatMessages.userId, userId))
+    .orderBy(desc(chatMessages.createdAt))
+    .limit(limit);
+}
+
+export async function clearUserChatHistory(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  return await db.delete(chatMessages).where(eq(chatMessages.userId, userId));
 }

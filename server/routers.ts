@@ -1097,8 +1097,36 @@ export const appRouter = router({
           input.context
         );
         
+        // Save user message and AI response to history
+        const lastUserMessage = input.messages[input.messages.length - 1];
+        if (lastUserMessage) {
+          await db.saveChatMessage({
+            userId: ctx.user.id,
+            role: lastUserMessage.role,
+            content: lastUserMessage.content,
+            context: JSON.stringify(input.context),
+          });
+        }
+        
+        await db.saveChatMessage({
+          userId: ctx.user.id,
+          role: "assistant",
+          content: response,
+          context: JSON.stringify(input.context),
+        });
+        
         return { message: response };
       }),
+    
+    history: protectedProcedure.query(async ({ ctx }) => {
+      const messages = await db.getUserChatHistory(ctx.user.id, 50);
+      return messages.reverse(); // Return in chronological order
+    }),
+    
+    clearHistory: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.clearUserChatHistory(ctx.user.id);
+      return { success: true };
+    }),
   }),
 });
 export type AppRouter = typeof appRouter;

@@ -18,14 +18,14 @@ export default function Home() {
   const activeGoal = goals?.find(g => !g.achieved);
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight mb-2">Credit Repair Dashboard</h1>
-        <p className="text-muted-foreground">Track your credit journey and take control of your financial future</p>
+        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">Credit Repair Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Track your credit journey and take control of your financial future</p>
       </div>
 
       {/* Credit Scores Overview */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {scoresLoading ? (
           <>
             <Card className="animate-pulse"><CardContent className="h-32" /></Card>
@@ -76,7 +76,7 @@ export default function Home() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="elegant-card">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Active Disputes</CardTitle>

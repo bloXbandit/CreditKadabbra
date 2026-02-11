@@ -448,3 +448,18 @@ export const disputeLetterTemplates = mysqlTable("dispute_letter_templates", {
 
 export type DisputeLetterTemplate = typeof disputeLetterTemplates.$inferSelect;
 export type InsertDisputeLetterTemplate = typeof disputeLetterTemplates.$inferInsert;
+
+/**
+ * AI chat history for persistent conversations
+ */
+export const chatMessages = mysqlTable("chat_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["user", "assistant"]).notNull(),
+  content: text("content").notNull(),
+  context: text("context"), // JSON string of page context
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type InsertChatMessage = typeof chatMessages.$inferInsert;

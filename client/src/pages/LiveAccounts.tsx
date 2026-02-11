@@ -130,13 +130,11 @@ export default function LiveAccounts() {
   }
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight mb-2">Live Accounts</h1>
-          <p className="text-muted-foreground">
-            Track your credit cards, loans, and mortgages in real-time
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Live Accounts</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Track your credit cards, loans, and mortgages in real-time</p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
