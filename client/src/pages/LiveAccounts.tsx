@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Plus, CreditCard, Home, Car, Wallet, TrendingUp, Edit2, Trash2, Calendar, FileText } from "lucide-react";
+import { Loader2, Plus, CreditCard, Home, Car, Wallet, TrendingUp, Edit2, Trash2, Calendar, FileText, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
@@ -16,9 +16,11 @@ type AccountType = "credit_card" | "mortgage" | "auto_loan" | "personal_loan" | 
 
 export default function LiveAccounts() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [filterType, setFilterType] = useState<AccountType | "all">("all");
   const [editingField, setEditingField] = useState<{ accountId: number; field: string } | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   
   const { data: accounts, isLoading, refetch } = trpc.liveAccounts.list.useQuery();
   const createAccount = trpc.liveAccounts.create.useMutation({
@@ -46,6 +48,28 @@ export default function LiveAccounts() {
       refetch();
     },
   });
+
+  const importCSV = trpc.liveAccounts.importCSV.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Successfully imported ${data.imported} accounts`);
+      refetch();
+      setIsImportOpen(false);
+      setCsvFile(null);
+    },
+    onError: (error) => {
+      toast.error(`Import failed: ${error.message}`);
+    },
+  });
+
+  const handleCSVImport = async () => {
+    if (!csvFile) {
+      toast.error('Please select a CSV file');
+      return;
+    }
+
+    const text = await csvFile.text();
+    importCSV.mutate({ csvContent: text });
+  };
 
   // Form state
   const [accountName, setAccountName] = useState("");
@@ -161,6 +185,47 @@ export default function LiveAccounts() {
             <FileText className="w-4 h-4" />
             Generate Dispute Letters
           </Button>
+          <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg" variant="outline" className="gap-2">
+                <Upload className="w-4 h-4" />
+                Import CSV
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Import Accounts from CSV</DialogTitle>
+                <DialogDescription>
+                  Upload a CSV file with your account data from Credit Karma, Experian, or any credit monitoring service
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="csv-file">CSV File</Label>
+                  <Input
+                    id="csv-file"
+                    type="file"
+                    accept=".csv"
+                    onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Expected columns: Account Name, Account Type, Balance, Credit Limit, Payment Status, Date Opened
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleCSVImport} 
+                  disabled={!csvFile || importCSV.isPending}
+                  className="w-full"
+                >
+                  {importCSV.isPending ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Importing...</>
+                  ) : (
+                    <>Import Accounts</>
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button size="lg" className="gap-2">

@@ -11,7 +11,7 @@ import { FileText, Download, Copy, Plus, Trash2, AlertCircle } from 'lucide-reac
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function DisputeLetterGenerator() {
-  const [letterType, setLetterType] = useState<'inaccuracy' | 'validation' | 'goodwill' | 'identity_theft' | 'mixed_file'>('inaccuracy');
+  const [letterType, setLetterType] = useState<'inaccuracy' | 'validation' | 'goodwill' | 'identity_theft' | 'mixed_file' | 'late_payment_removal' | 'collection_validation' | 'charge_off_dispute' | 'inquiry_removal' | 'bankruptcy_reaging' | 'account_closure' | 'credit_limit_increase' | 'duplicate_account' | 'outdated_information'>('inaccuracy');
   const [bureau, setBureau] = useState<'equifax' | 'experian' | 'transunion'>('transunion');
   const [generatedLetter, setGeneratedLetter] = useState('');
   
@@ -147,6 +147,15 @@ export function DisputeLetterGenerator() {
                     <SelectItem value="goodwill">Goodwill Letter</SelectItem>
                     <SelectItem value="identity_theft">Identity Theft</SelectItem>
                     <SelectItem value="mixed_file">Mixed File</SelectItem>
+                    <SelectItem value="late_payment_removal">Late Payment Removal</SelectItem>
+                    <SelectItem value="collection_validation">Collection Validation</SelectItem>
+                    <SelectItem value="charge_off_dispute">Charge-Off Dispute</SelectItem>
+                    <SelectItem value="inquiry_removal">Inquiry Removal</SelectItem>
+                    <SelectItem value="bankruptcy_reaging">Bankruptcy Re-Aging</SelectItem>
+                    <SelectItem value="account_closure">Account Closure Dispute</SelectItem>
+                    <SelectItem value="credit_limit_increase">Credit Limit Increase</SelectItem>
+                    <SelectItem value="duplicate_account">Duplicate Account Removal</SelectItem>
+                    <SelectItem value="outdated_information">Outdated Information</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground">

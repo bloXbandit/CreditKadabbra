@@ -263,7 +263,7 @@ export const appRouter = router({
           creditorName: z.string().optional(),
           reason: z.string(),
         })),
-        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file"]),
+        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file", "late_payment_removal", "collection_validation", "charge_off_dispute", "inquiry_removal", "bankruptcy_reaging", "account_closure", "credit_limit_increase", "duplicate_account", "outdated_information"]),
       }))
       .mutation(async ({ input }) => {
         const { generateDisputeLetter } = await import('./disputeLetterGenerator');
@@ -282,7 +282,7 @@ export const appRouter = router({
           ssn: z.string().optional(),
           dateOfBirth: z.string().optional(),
         }),
-        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file"]).optional(),
+        letterType: z.enum(["inaccuracy", "validation", "goodwill", "identity_theft", "mixed_file", "late_payment_removal", "collection_validation", "charge_off_dispute", "inquiry_removal", "bankruptcy_reaging", "account_closure", "credit_limit_increase", "duplicate_account", "outdated_information"]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Get all reports for user and find the one requested
@@ -799,6 +799,41 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await db.deleteLiveAccount(input.id);
         return { success: true };
+      }),
+    importCSV: protectedProcedure
+      .input(z.object({
+        csvContent: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { parseAccountsCSV } = await import('./csvParser');
+        
+        try {
+          const accounts = parseAccountsCSV(input.csvContent);
+          
+          // Import each account
+          const imported = [];
+          for (const acc of accounts) {
+            const created = await db.createLiveAccount({
+              userId: ctx.user.id,
+              accountName: acc.accountName,
+              accountType: acc.accountType as any || 'other',
+              currentBalance: acc.balance ? parseFloat(acc.balance) : undefined,
+              creditLimit: acc.creditLimit ? parseFloat(acc.creditLimit) : undefined,
+              monthlyPayment: acc.monthlyPayment ? parseFloat(acc.monthlyPayment) : undefined,
+              interestRate: acc.interestRate ? parseFloat(acc.interestRate) : undefined,
+              status: 'current',
+            } as any);
+            imported.push(created);
+          }
+          
+          return {
+            success: true,
+            imported: imported.length,
+            accounts: imported,
+          };
+        } catch (error: any) {
+          throw new Error(`CSV import failed: ${error.message}`);
+        }
       }),
   }),
 

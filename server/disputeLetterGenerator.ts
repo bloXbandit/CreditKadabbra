@@ -22,7 +22,7 @@ export interface DisputeLetterParams {
     creditorName?: string;
     reason: string;
   }>;
-  letterType: 'inaccuracy' | 'validation' | 'goodwill' | 'identity_theft' | 'mixed_file';
+  letterType: 'inaccuracy' | 'validation' | 'goodwill' | 'identity_theft' | 'mixed_file' | 'late_payment_removal' | 'collection_validation' | 'charge_off_dispute' | 'inquiry_removal' | 'bankruptcy_reaging' | 'account_closure' | 'credit_limit_increase' | 'duplicate_account' | 'outdated_information';
 }
 
 /**
@@ -362,6 +362,20 @@ Enclosures: Proof of Identity and Supporting Documentation`;
  * Main function to generate dispute letter
  */
 export function generateDisputeLetter(params: DisputeLetterParams): string {
+  // Import new templates
+  const { DISPUTE_TEMPLATES } = require('./disputeLetterTemplates');
+  
+  // Handle new template types
+  if (params.letterType in DISPUTE_TEMPLATES) {
+    const templateFn = DISPUTE_TEMPLATES[params.letterType as keyof typeof DISPUTE_TEMPLATES];
+    return templateFn({
+      userInfo: params.userInfo,
+      bureau: params.bureau,
+      items: params.items,
+    });
+  }
+  
+  // Handle legacy types
   switch (params.letterType) {
     case 'inaccuracy':
       return generateInaccuracyLetter(params);

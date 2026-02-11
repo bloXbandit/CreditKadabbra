@@ -193,8 +193,10 @@ export async function parseTransUnionReportV2(pdfPath: string): Promise<ParsedTr
       currentSection = 'personal';
       continue;
     }
-    if (line.includes(' Accounts') || line === 'Accounts') {
+    // Look for the actual account listings section (not just "Accounts" header)
+    if (line.includes('Accounts with Adverse Information') || line.includes('Satisfactory Accounts')) {
       currentSection = 'accounts';
+      inRemarkSection = false; // Ensure we exit remark section
       continue;
     }
     if (line.includes('Inquiries')) {
@@ -226,10 +228,13 @@ export async function parseTransUnionReportV2(pdfPath: string): Promise<ParsedTr
     
     // Parse accounts - look for account name with account number pattern
     if (currentSection === 'accounts') {
+      // Skip the "Account Name" header line
+      if (line === 'Account Name') continue;
+      
       // Pattern: "CREDITOR NAME 1234****" - account number has asterisks at end
       const accountHeaderMatch = line.match(/^([A-Z\s&\/]+?)\s+(\d+\*+)$/);
       
-      if (accountHeaderMatch && lines[i + 1]?.trim() === 'Account Information') {
+      if (accountHeaderMatch && lines[i + 1]?.trim() === '') {
         // Save previous account if exists
         if (currentAccount) {
           result.accounts.push(currentAccount);
@@ -256,23 +261,73 @@ export async function parseTransUnionReportV2(pdfPath: string): Promise<ParsedTr
             break;
           }
           
-          // Extract key fields
-          if (detailLine.startsWith('Account Type') && lines[j + 1]) {
-            currentAccount.accountType = lines[j + 1].trim();
-          } else if (detailLine.startsWith('Loan Type') && lines[j + 1]) {
-            currentAccount.loanType = lines[j + 1].trim();
-          } else if (detailLine.startsWith('Balance') && lines[j + 1]) {
-            currentAccount.balance = lines[j + 1].replace('$', '').replace(',', '').trim();
-          } else if (detailLine.startsWith('Credit Limit') && lines[j + 1]) {
-            currentAccount.creditLimit = lines[j + 1].replace('$', '').replace(',', '').trim();
-          } else if (detailLine.startsWith('Date Opened') && lines[j + 1]) {
-            currentAccount.dateOpened = lines[j + 1].trim();
-          } else if (detailLine.startsWith('Date Updated') && lines[j + 1]) {
-            currentAccount.dateUpdated = lines[j + 1].trim();
-          } else if (detailLine.startsWith('Pay Status') && lines[j + 1]) {
-            currentAccount.paymentStatus = lines[j + 1].trim();
-          } else if (detailLine.startsWith('Monthly Payment') && lines[j + 1]) {
-            currentAccount.monthlyPayment = lines[j + 1].replace('$', '').replace(',', '').trim();
+          // Extract key fields - handle multi-column layout
+          if (detailLine.startsWith('Account Type')) {
+            // Next non-empty line is the value
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && !val.startsWith('Loan Type') && !val.startsWith('Balance')) {
+                currentAccount.accountType = val;
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Loan Type')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && !val.startsWith('Balance') && !val.startsWith('Date')) {
+                currentAccount.loanType = val;
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Balance') && !detailLine.includes('High Balance')) {
+            // Look for dollar amount in next few lines
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && val.match(/^\$[\d,]+/)) {
+                currentAccount.balance = val.replace('$', '').replace(',', '').trim();
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Credit Limit')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && val.match(/^\$[\d,]+/)) {
+                currentAccount.creditLimit = val.replace('$', '').replace(',', '').trim();
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Date Opened')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && val.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                currentAccount.dateOpened = val;
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Date Updated')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && val.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                currentAccount.dateUpdated = val;
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Pay Status')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && !val.startsWith('Terms') && !val.startsWith('Date')) {
+                currentAccount.paymentStatus = val;
+                break;
+              }
+            }
+          } else if (detailLine.startsWith('Monthly Payment')) {
+            for (let k = j + 1; k < j + 5; k++) {
+              const val = lines[k]?.trim();
+              if (val && val.match(/^\$[\d,]+/)) {
+                currentAccount.monthlyPayment = val.replace('$', '').replace(',', '').trim();
+                break;
+              }
+            }
           }
           
           // Check for negative indicators in remarks
