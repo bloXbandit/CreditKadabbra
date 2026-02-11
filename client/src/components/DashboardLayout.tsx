@@ -38,6 +38,7 @@ const menuItems = [
   { icon: Wallet, label: "Live Accounts", path: "/live-accounts" },
   { icon: FileCheck, label: "Documents", path: "/documents" },
   { icon: Shield, label: "Privacy", path: "/privacy" },
+  { icon: Shield, label: "Alternative Bureaus", path: "/alternative-bureaus" },
   { icon: BarChart3, label: "Progress", path: "/progress" },
 ];
 

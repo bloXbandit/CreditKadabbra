@@ -341,3 +341,29 @@
 - [ ] Create outcome recording form
 - [ ] Add document attachment to disputes
 - [ ] Build dispute timeline view
+
+
+## Phase 9: Alternative Bureau Management
+- [ ] Build alternative bureaus dashboard page
+- [ ] Add bureau cards for all 6 bureaus (Innovis, LexisNexis, SageStream, ChexSystems, CoreLogic, Clarity)
+- [ ] Implement bulk report request functionality
+- [ ] Add dispute tracking for alternative bureaus
+- [ ] Create opt-out management interface
+- [ ] Add security freeze management for alternative bureaus
+
+## Phase 10: Credit Report Parsing Implementation
+- [x] Connect upload UI to report parser backend
+- [x] Implement PDF text extraction
+- [x] Parse account information from reports
+- [x] Extract inquiries and public records
+- [x] Auto-populate live accounts from parsed data
+- [x] Generate scores if missing from report
+- [x] Simulate missing bureau scores
+
+## Phase 11: Inline Editing for Live Accounts
+- [x] Add click-to-edit functionality to balance fields
+- [x] Implement auto-save on blur
+- [ ] Add optimistic UI updates
+- [ ] Show loading states during save
+- [x] Add keyboard shortcuts (Enter to save, Esc to cancel)
+- [x] Implement inline editing for credit limits

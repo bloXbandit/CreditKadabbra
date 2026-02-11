@@ -16,6 +16,7 @@ import Wayfinder from "./pages/Wayfinder";
 import Tasks from "./pages/Tasks";
 import Documents from "./pages/Documents";
 import Privacy from "./pages/Privacy";
+import AlternativeBureaus from "./pages/AlternativeBureaus";
 import Progress from "./pages/Progress";
 
 function Router() {
@@ -32,7 +33,8 @@ function Router() {
         <Route path={"/wayfinder"} component={Wayfinder} />
         <Route path={"/tasks"} component={Tasks} />
         <Route path={"/documents"} component={Documents} />
-        <Route path={"/privacy"} component={Privacy} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/alternative-bureaus" component={AlternativeBureaus} />
         <Route path={"/progress"} component={Progress} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />

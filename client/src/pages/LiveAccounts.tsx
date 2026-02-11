@@ -17,6 +17,8 @@ type AccountType = "credit_card" | "mortgage" | "auto_loan" | "personal_loan" | 
 export default function LiveAccounts() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [filterType, setFilterType] = useState<AccountType | "all">("all");
+  const [editingField, setEditingField] = useState<{ accountId: number; field: string } | null>(null);
+  const [editValue, setEditValue] = useState("");
   
   const { data: accounts, isLoading, refetch } = trpc.liveAccounts.list.useQuery();
   const createAccount = trpc.liveAccounts.create.useMutation({
@@ -397,12 +399,88 @@ export default function LiveAccounts() {
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
                       <span className="text-sm text-muted-foreground">Balance</span>
-                      <span className="text-2xl font-bold">${parseFloat(account.currentBalance || "0").toLocaleString()}</span>
+                      {editingField?.accountId === account.id && editingField?.field === "balance" ? (
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={() => {
+                            updateAccount.mutate({
+                              id: account.id,
+                              currentBalance: parseFloat(editValue),
+                            });
+                            setEditingField(null);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateAccount.mutate({
+                                id: account.id,
+                                currentBalance: parseFloat(editValue),
+                              });
+                              setEditingField(null);
+                            } else if (e.key === "Escape") {
+                              setEditingField(null);
+                            }
+                          }}
+                          className="text-2xl font-bold text-right w-32 h-8"
+                          autoFocus
+                        />
+                      ) : (
+                        <span 
+                          className="text-2xl font-bold cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => {
+                            setEditingField({ accountId: account.id, field: "balance" });
+                            setEditValue(account.currentBalance || "0");
+                          }}
+                          title="Click to edit"
+                        >
+                          ${parseFloat(account.currentBalance || "0").toLocaleString()}
+                        </span>
+                      )}
                     </div>
                     {account.creditLimit && (
                       <>
                         <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                          <span>Limit: ${parseFloat(account.creditLimit).toLocaleString()}</span>
+                          {editingField?.accountId === account.id && editingField?.field === "limit" ? (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onBlur={() => {
+                                updateAccount.mutate({
+                                  id: account.id,
+                                  creditLimit: parseFloat(editValue),
+                                });
+                                setEditingField(null);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  updateAccount.mutate({
+                                    id: account.id,
+                                    creditLimit: parseFloat(editValue),
+                                  });
+                                  setEditingField(null);
+                                } else if (e.key === "Escape") {
+                                  setEditingField(null);
+                                }
+                              }}
+                              className="text-xs w-24 h-6"
+                              autoFocus
+                            />
+                          ) : (
+                            <span 
+                              className="cursor-pointer hover:text-primary transition-colors"
+                              onClick={() => {
+                                setEditingField({ accountId: account.id, field: "limit" });
+                                setEditValue(account.creditLimit || "0");
+                              }}
+                              title="Click to edit"
+                            >
+                              Limit: ${parseFloat(account.creditLimit).toLocaleString()}
+                            </span>
+                          )}
                           <span className={getUtilizationColor(util)}>{util.toFixed(1)}%</span>
                         </div>
                         <Progress value={util} className="h-2" />
