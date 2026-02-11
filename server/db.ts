@@ -711,3 +711,67 @@ export async function clearUserChatHistory(userId: number) {
   
   return await db.delete(chatMessages).where(eq(chatMessages.userId, userId));
 }
+
+
+// ============ Notification Operations ============
+
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getNotificationPreferences(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const { notificationPreferences } = await import("../drizzle/schema");
+  const result = await db.select().from(notificationPreferences)
+    .where(eq(notificationPreferences.userId, userId))
+    .limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function createNotificationPreferences(prefs: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const { notificationPreferences } = await import("../drizzle/schema");
+  const result = await db.insert(notificationPreferences).values(prefs);
+  
+  // Fetch and return the created record
+  const created = await getNotificationPreferences(prefs.userId);
+  return created;
+}
+
+export async function updateNotificationPreferences(userId: number, updates: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const { notificationPreferences } = await import("../drizzle/schema");
+  await db.update(notificationPreferences)
+    .set(updates)
+    .where(eq(notificationPreferences.userId, userId));
+}
+
+export async function createNotificationLog(log: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const { notificationLog } = await import("../drizzle/schema");
+  const result = await db.insert(notificationLog).values(log);
+  return result;
+}
+
+export async function getNotificationLogByUser(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const { notificationLog } = await import("../drizzle/schema");
+  return await db.select().from(notificationLog)
+    .where(eq(notificationLog.userId, userId))
+    .orderBy(desc(notificationLog.sentAt))
+    .limit(limit);
+}

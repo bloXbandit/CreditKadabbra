@@ -441,3 +441,14 @@
 - [ ] Update AI chat widget branding with logo
 - [ ] Test logo display on desktop and mobile
 - [ ] Push changes to GitHub
+
+
+## Phase 15: Email Notification System
+- [x] Database schema for notification preferences and notification log
+- [x] Email notification service with templates (payment reminders, dispute deadlines, bureau responses)
+- [x] Scheduled job for payment date reminders (3 days before optimal date)
+- [x] Scheduled job for dispute deadline tracking (30 days after filing)
+- [x] Scheduled job for bureau response tracking (check for updates)
+- [x] User notification preferences UI (enable/disable by type, frequency settings)
+- [x] Email template system with personalized content
+- [x] Test notification delivery and scheduling

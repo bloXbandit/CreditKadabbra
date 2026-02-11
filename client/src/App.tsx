@@ -18,6 +18,7 @@ import Documents from "./pages/Documents";
 import Privacy from "./pages/Privacy";
 import AlternativeBureaus from "./pages/AlternativeBureaus";
 import Progress from "./pages/Progress";
+import NotificationSettings from "./pages/NotificationSettings";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/privacy" component={Privacy} />
         <Route path="/alternative-bureaus" component={AlternativeBureaus} />
         <Route path={"/progress"} component={Progress} />
+        <Route path="/notifications" component={NotificationSettings} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

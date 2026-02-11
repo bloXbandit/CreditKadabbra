@@ -463,3 +463,48 @@ export const chatMessages = mysqlTable("chat_messages", {
 
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertChatMessage = typeof chatMessages.$inferInsert;
+
+/**
+ * User notification preferences
+ */
+export const notificationPreferences = mysqlTable("notification_preferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  paymentReminders: boolean("paymentReminders").default(true).notNull(),
+  paymentReminderDays: int("paymentReminderDays").default(3).notNull(), // Days before optimal payment date
+  disputeDeadlines: boolean("disputeDeadlines").default(true).notNull(),
+  bureauResponses: boolean("bureauResponses").default(true).notNull(),
+  scoreUpdates: boolean("scoreUpdates").default(true).notNull(),
+  utilizationAlerts: boolean("utilizationAlerts").default(true).notNull(),
+  utilizationThreshold: int("utilizationThreshold").default(30).notNull(), // Alert when utilization exceeds this %
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NotificationPreference = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreference = typeof notificationPreferences.$inferInsert;
+
+/**
+ * Notification log for tracking sent notifications
+ */
+export const notificationLog = mysqlTable("notification_log", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  notificationType: mysqlEnum("notificationType", [
+    "payment_reminder",
+    "dispute_deadline",
+    "bureau_response",
+    "score_update",
+    "utilization_alert"
+  ]).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  relatedEntityType: varchar("relatedEntityType", { length: 50 }), // "account", "dispute", "score"
+  relatedEntityId: int("relatedEntityId"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  status: mysqlEnum("status", ["sent", "failed", "pending"]).default("pending").notNull(),
+  errorMessage: text("errorMessage"),
+});
+
+export type NotificationLog = typeof notificationLog.$inferSelect;
+export type InsertNotificationLog = typeof notificationLog.$inferInsert;

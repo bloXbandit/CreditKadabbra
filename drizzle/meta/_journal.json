@@ -29,6 +29,13 @@
       "when": 1770776169740,
       "tag": "0003_tiny_major_mapleleaf",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1770779514933,
+      "tag": "0004_tough_raza",
+      "breakpoints": true
     }
   ]
 }

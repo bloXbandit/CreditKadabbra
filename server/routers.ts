@@ -1128,5 +1128,49 @@ export const appRouter = router({
       return { success: true };
     }),
   }),
+
+  // Notification Preferences
+  notifications: router({
+    getPreferences: protectedProcedure.query(async ({ ctx }) => {
+      const prefs = await db.getNotificationPreferences(ctx.user.id);
+      if (!prefs) {
+        // Create default preferences
+        return await db.createNotificationPreferences({
+          userId: ctx.user.id,
+          paymentReminders: true,
+          paymentReminderDays: 3,
+          disputeDeadlines: true,
+          bureauResponses: true,
+          scoreUpdates: true,
+          utilizationAlerts: true,
+          utilizationThreshold: 30
+        });
+      }
+      return prefs;
+    }),
+    
+    updatePreferences: protectedProcedure
+      .input(z.object({
+        paymentReminders: z.boolean().optional(),
+        paymentReminderDays: z.number().min(1).max(7).optional(),
+        disputeDeadlines: z.boolean().optional(),
+        bureauResponses: z.boolean().optional(),
+        scoreUpdates: z.boolean().optional(),
+        utilizationAlerts: z.boolean().optional(),
+        utilizationThreshold: z.number().min(10).max(90).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateNotificationPreferences(ctx.user.id, input);
+        return { success: true };
+      }),
+    
+    getHistory: protectedProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(100).default(50)
+      }))
+      .query(async ({ ctx, input }) => {
+        return await db.getNotificationLogByUser(ctx.user.id, input.limit);
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;
