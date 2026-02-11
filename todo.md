@@ -298,3 +298,19 @@
 - [ ] Add reminders for optimal payment windows
 - [ ] Build payment date explainer (why this date is optimal)
 - [ ] Integrate with existing task/reminder system
+
+
+## Phase 6: UI Implementation
+- [x] Build credit report upload page with drag-and-drop
+- [x] Add text paste option for report upload
+- [x] Create upload progress indicator
+- [x] Add simulated score badges to Home dashboard
+- [x] Show confidence levels on score cards (high/medium/low)
+- [x] Create payment date recommendation cards
+- [x] Add countdown timers to payment cards
+- [x] Build expandable reasoning sections
+- [x] Color-code urgency (green/yellow/red)
+- [x] Create payment calendar view component
+- [x] Add visual indicators for statement/due/optimal dates
+- [x] Integrate calendar with account tracker
+- [ ] Test all UI features end-to-end

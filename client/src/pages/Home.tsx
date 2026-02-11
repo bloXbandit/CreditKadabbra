@@ -1,7 +1,9 @@
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, AlertCircle, Target, FileCheck, ArrowRight } from "lucide-react";
+import { TrendingUp, AlertCircle, Target, FileCheck, ArrowRight, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLocation } from "wouter";
 
 export default function Home() {
@@ -42,8 +44,23 @@ export default function Home() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-4xl font-bold">
-                      {score?.score || '—'}
+                    <div className="flex items-start justify-between">
+                      <div className="text-4xl font-bold">
+                        {score?.score || '—'}
+                      </div>
+                      {score?.notes?.includes('Simulated') && (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Badge variant="outline" className="text-xs">
+                              <Info className="w-3 h-3 mr-1" />
+                              Simulated
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs text-xs">{score.notes}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                     {score && (
                       <p className="text-xs text-muted-foreground mt-2">
