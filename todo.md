@@ -493,3 +493,17 @@
 - [ ] Extract payment history tables from accounts
 - [ ] Identify negative items from payment status and remarks
 - [ ] Test dispute letter generation with parsed accounts
+
+## Phase 18: Enhanced Parser & One-Click Dispute Flow
+- [x] Improve PDF parser with "Account Information" header detection
+- [x] Filter out page headers, footers, and navigation elements
+- [x] Filter out remark code reference sections
+- [x] Parse payment history tables within accounts
+- [x] Detect late payment patterns (30/60/90 day lates)
+- [x] Auto-flag accounts with negative payment history
+- [x] Add "Generate Dispute Letters" button to Live Accounts page
+- [x] Pre-fill dispute generator with negative accounts
+- [ ] Debug account extraction (pattern matching needs refinement)
+- [ ] Test end-to-end flow with actual report once parser is working
+- [ ] Commit all changes to Git
+- [ ] Push to repository

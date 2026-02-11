@@ -994,7 +994,7 @@ export const appRouter = router({
         bureau: z.enum(['equifax', 'experian', 'transunion']).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const { parseTransUnionReport } = await import('./transunionParser');
+        const { parseTransUnionReportV2 } = await import('./transunionParserV2');
         const { calculateCreditScore } = await import('./scoreCalculator');
         const { simulateMissingBureauScores } = await import('./bureauSimulator');
         
@@ -1006,7 +1006,7 @@ export const appRouter = router({
         
         try {
           // Parse the PDF
-          const parsed = await parseTransUnionReport(tempPath);
+          const parsed = await parseTransUnionReportV2(tempPath);
           
           // Calculate score from parsed data
           const scoreResult = calculateCreditScore({

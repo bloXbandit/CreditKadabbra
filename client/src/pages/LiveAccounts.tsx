@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Plus, CreditCard, Home, Car, Wallet, TrendingUp, Edit2, Trash2, Calendar } from "lucide-react";
+import { Loader2, Plus, CreditCard, Home, Car, Wallet, TrendingUp, Edit2, Trash2, Calendar, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
@@ -136,17 +136,42 @@ export default function LiveAccounts() {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Live Accounts</h1>
           <p className="text-sm sm:text-base text-muted-foreground">Track your credit cards, loans, and mortgages in real-time</p>
         </div>
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button size="lg" className="gap-2">
-              <Plus className="w-4 h-4" />
-              Add Account
-              <kbd className="ml-2 pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                <span className="text-xs">⌘</span>K
-              </kbd>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex gap-2">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => {
+              const negativeAccounts = accounts?.filter(acc => acc.status === 'late' || acc.status === 'closed');
+              if (!negativeAccounts || negativeAccounts.length === 0) {
+                toast.info('No negative accounts found to dispute');
+                return;
+              }
+              // Navigate to dispute letter generator with pre-filled accounts
+              const accountsData = negativeAccounts.map(acc => ({
+                accountName: acc.accountName,
+                accountType: acc.accountType,
+                balance: acc.currentBalance || '0',
+                status: acc.status || 'unknown',
+              }));
+              sessionStorage.setItem('disputeAccounts', JSON.stringify(accountsData));
+              window.location.href = '/dispute-letters';
+            }}
+          >
+            <FileText className="w-4 h-4" />
+            Generate Dispute Letters
+          </Button>
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Account
+                <kbd className="ml-2 pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Account</DialogTitle>
               <DialogDescription>
@@ -293,8 +318,9 @@ export default function LiveAccounts() {
                 </Button>
               </div>
             </form>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Filter Tabs */}
