@@ -947,7 +947,129 @@ export const appRouter = router({
         return calculateScoreImpact(currentProfile, newProfile);
       }),
   }),
+
+  // Bureau Simulator & Payment Calculator
+  reportUpload: router({
+    parseAndGenerateScore: protectedProcedure
+      .input(z.object({
+        reportText: z.string(),
+        bureau: z.enum(['equifax', 'experian', 'transunion']).optional(),
+        reportedScore: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { parseCreditReportText } = await import('./reportParser');
+        const { calculateCreditScore } = await import('./scoreCalculator');
+        const { simulateMissingBureauScores } = await import('./bureauSimulator');
+        
+        // Parse the credit report
+        const parsed = parseCreditReportText(input.reportText);
+        
+        // Calculate score from parsed data
+        const scoreResult = calculateCreditScore({
+          accounts: parsed.accounts,
+          inquiries: parsed.inquiries,
+          publicRecords: parsed.publicRecords,
+        });
+        
+        // Determine which score to use
+        const actualScore = input.reportedScore || scoreResult.score;
+        const bureau = input.bureau || 'experian'; // Default to Experian if not specified
+        
+        // Simulate missing bureau scores
+        const allBureauScores = simulateMissingBureauScores(
+          bureau,
+          actualScore,
+          parsed.accounts.length
+        );
+        
+        // Store all scores
+        for (const bureauScore of allBureauScores) {
+          await db.createCreditScore({
+            userId: ctx.user.id,
+            bureau: bureauScore.bureau,
+            score: bureauScore.score,
+            scoreDate: new Date().toISOString() as any,
+            notes: bureauScore.isSimulated 
+              ? `Simulated (${bureauScore.confidence} confidence): ${bureauScore.notes}`
+              : bureauScore.notes || 'From uploaded credit report',
+          });
+        }
+        
+        // Store parsed accounts as live accounts
+        for (const account of parsed.accounts) {
+          await db.createLiveAccount({
+            userId: ctx.user.id,
+            accountName: `Account ${parsed.accounts.indexOf(account) + 1}`,
+            accountType: account.accountType,
+            currentBalance: account.currentBalance.toString(),
+            creditLimit: account.creditLimit?.toString(),
+            status: account.status,
+          });
+        }
+        
+        return {
+          parsed,
+          scoreResult,
+          bureauScores: allBureauScores,
+          accountsCreated: parsed.accounts.length,
+        };
+      }),
+  }),
+
+  paymentOptimizer: router({
+    calculateOptimalDate: protectedProcedure
+      .input(z.object({
+        accountName: z.string(),
+        statementDate: z.string(),
+        dueDate: z.string(),
+        currentBalance: z.number(),
+        creditLimit: z.number(),
+        plannedPayment: z.number().optional(),
+      }))
+      .query(({ input }) => {
+        const { calculateOptimalPaymentDate } = require('./bureauSimulator');
+        
+        return calculateOptimalPaymentDate(
+          input.accountName,
+          new Date(input.statementDate),
+          new Date(input.dueDate),
+          input.currentBalance,
+          input.creditLimit,
+          input.plannedPayment
+        );
+      }),
+    
+    calculateAllDates: protectedProcedure
+      .query(async ({ ctx }) => {
+        const { calculateAllPaymentDates, estimateStatementDate } = await import('./bureauSimulator');
+        
+        const liveAccounts = await db.getUserLiveAccounts(ctx.user.id);
+        
+        // Filter to revolving accounts with due dates
+        const accountsWithDates = liveAccounts
+          .filter(a => a.accountType === 'credit_card' && a.creditLimit && Number(a.creditLimit) > 0)
+          .map(a => {
+            const now = new Date();
+            const statementDay = a.statementDate || 1;
+            const dueDay = a.paymentDueDate || 21;
+            
+            const statementDate = new Date(now.getFullYear(), now.getMonth(), statementDay);
+            const dueDate = new Date(now.getFullYear(), now.getMonth(), dueDay);
+            
+            return {
+              name: a.accountName,
+              statementDate,
+              dueDate,
+              currentBalance: Number(a.currentBalance) || 0,
+              creditLimit: Number(a.creditLimit) || 0,
+            };
+          });
+        
+        return calculateAllPaymentDates(accountsWithDates);
+      }),
+  }),
 });
+
 
 
 export type AppRouter = typeof appRouter;

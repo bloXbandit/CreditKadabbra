@@ -274,3 +274,27 @@
 - [ ] Implement auto-save (no submit button needed)
 - [ ] Create mobile-optimized entry flow
 - [ ] Add progress indicator for incomplete accounts
+
+
+## Phase 4: Intelligent Report Upload & Score Generation
+- [x] Design auto-score generation from parsed credit reports
+- [x] Implement bureau simulation logic (if only 1 bureau, simulate other 2)
+- [ ] Add visual flags/badges for simulated vs actual bureau scores
+- [ ] Create credit report upload interface with drag-and-drop
+- [ ] Implement OCR/text extraction from PDF reports
+- [x] Parse credit report to extract all accounts, inquiries, public records
+- [x] Auto-generate score if report has no score listed
+- [x] Store bureau source (equifax/experian/transunion) with parsed data
+- [x] Simulate missing bureau scores with variance logic
+- [ ] Add "Simulated" badge to UI for estimated scores
+- [ ] Create report upload history tracking
+
+## Phase 5: Optimal Payment Date Calculator
+- [x] Design payment date optimization algorithm
+- [x] Calculate best payment date based on statement date
+- [x] Implement logic to minimize reported utilization
+- [ ] Add payment date recommendations to account cards
+- [ ] Create payment calendar view with optimal dates
+- [ ] Add reminders for optimal payment windows
+- [ ] Build payment date explainer (why this date is optimal)
+- [ ] Integrate with existing task/reminder system
