@@ -987,6 +987,102 @@ export const appRouter = router({
 
   // Bureau Simulator & Payment Calculator
   reportUpload: router({
+    uploadPDF: protectedProcedure
+      .input(z.object({
+        fileData: z.string(), // base64 encoded PDF
+        fileName: z.string(),
+        bureau: z.enum(['equifax', 'experian', 'transunion']).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { parseTransUnionReport } = await import('./transunionParser');
+        const { calculateCreditScore } = await import('./scoreCalculator');
+        const { simulateMissingBureauScores } = await import('./bureauSimulator');
+        
+        // Decode base64 and save temporarily
+        const buffer = Buffer.from(input.fileData, 'base64');
+        const tempPath = `/tmp/${nanoid()}.pdf`;
+        const fs = require('fs');
+        fs.writeFileSync(tempPath, buffer);
+        
+        try {
+          // Parse the PDF
+          const parsed = await parseTransUnionReport(tempPath);
+          
+          // Calculate score from parsed data
+          const scoreResult = calculateCreditScore({
+            accounts: parsed.accounts.map((acc: any) => ({
+              accountType: acc.accountType || 'revolving',
+              currentBalance: parseFloat(acc.balance?.toString() || '0') || 0,
+              creditLimit: parseFloat(acc.creditLimit?.toString() || '0') || undefined,
+              status: acc.paymentStatus || 'current',
+              openDate: acc.dateOpened || new Date().toISOString(),
+            })),
+            inquiries: (parsed.inquiries || []).map((inq: any) => ({
+              date: inq.inquiryDate || new Date().toISOString(),
+              creditor: inq.creditorName || 'Unknown',
+              type: inq.inquiryType || 'hard',
+            })),
+            publicRecords: [],
+          });
+          
+          const bureau = input.bureau || 'transunion';
+          const actualScore = scoreResult.score;
+          
+          // Simulate missing bureau scores
+          const allBureauScores = simulateMissingBureauScores(
+            bureau,
+            actualScore,
+            parsed.accounts.length
+          );
+          
+          // Store all scores
+          for (const bureauScore of allBureauScores) {
+            await db.createCreditScore({
+              userId: ctx.user.id,
+              bureau: bureauScore.bureau,
+              score: bureauScore.score,
+              scoreDate: new Date().toISOString() as any,
+              notes: bureauScore.isSimulated 
+                ? `Simulated (${bureauScore.confidence} confidence): ${bureauScore.notes}`
+                : bureauScore.notes || 'From uploaded TransUnion PDF report',
+            });
+          }
+          
+          // Store parsed accounts as live accounts
+          let accountsCreated = 0;
+          for (const account of parsed.accounts) {
+            await db.createLiveAccount({
+              userId: ctx.user.id,
+              accountName: account.accountName || `Account ${accountsCreated + 1}`,
+              accountType: account.accountType as any,
+              currentBalance: account.balance?.toString() || '0',
+              creditLimit: account.creditLimit?.toString(),
+              status: (account.paymentStatus?.toLowerCase().includes('current') ? 'current' : 
+                      account.paymentStatus?.toLowerCase().includes('late') ? 'late' :
+                      account.paymentStatus?.toLowerCase().includes('closed') ? 'closed' :
+                      account.paymentStatus?.toLowerCase().includes('paid') ? 'paid_off' : undefined) as any,
+            });
+            accountsCreated++;
+          }
+          
+          // Clean up temp file
+          fs.unlinkSync(tempPath);
+          
+          return {
+            parsed,
+            scoreResult,
+            bureauScores: allBureauScores,
+            accountsCreated,
+            negativeItemsFound: parsed.accounts.filter((a: any) => a.isNegative).length,
+          };
+        } catch (error: any) {
+          // Clean up temp file on error
+          if (fs.existsSync(tempPath)) {
+            fs.unlinkSync(tempPath);
+          }
+          throw new Error(`PDF parsing failed: ${error.message}`);
+        }
+      }),
     parseAndGenerateScore: protectedProcedure
       .input(z.object({
         reportText: z.string(),

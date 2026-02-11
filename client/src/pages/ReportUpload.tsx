@@ -18,7 +18,24 @@ export default function ReportUpload() {
   const [reportedScore, setReportedScore] = useState<string>("");
   const [isDragging, setIsDragging] = useState(false);
 
-  const uploadMutation = trpc.reportUpload.parseAndGenerateScore.useMutation({
+  const uploadTextMutation = trpc.reportUpload.parseAndGenerateScore.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Report uploaded successfully! Created ${data.accountsCreated} accounts.`);
+      
+      // Show bureau scores
+      data.bureauScores.forEach(bs => {
+        const badge = bs.isSimulated ? " (Simulated)" : " (Actual)";
+        toast.info(`${bs.bureau}: ${bs.score}${badge}`);
+      });
+      
+      setTimeout(() => setLocation("/"), 2000);
+    },
+    onError: (error) => {
+      toast.error(`Upload failed: ${error.message}`);
+    },
+  });
+
+  const uploadPDFMutation = trpc.reportUpload.uploadPDF.useMutation({
     onSuccess: (data) => {
       toast.success(`Report uploaded successfully! Created ${data.accountsCreated} accounts.`);
       
@@ -57,8 +74,20 @@ export default function ReportUpload() {
           toast.success("File loaded successfully!");
         };
         reader.readAsText(file);
+      } else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = (event.target?.result as string).split(',')[1];
+          uploadPDFMutation.mutate({
+            fileData: base64,
+            fileName: file.name,
+            bureau: bureau,
+          });
+        };
+        reader.readAsDataURL(file);
+        toast.info("Processing PDF...");
       } else {
-        toast.error("Please upload a text file (.txt)");
+        toast.error("Please upload a text file (.txt) or PDF file (.pdf)");
       }
     }
   };
@@ -66,12 +95,26 @@ export default function ReportUpload() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setReportText(event.target?.result as string);
-        toast.success("File loaded successfully!");
-      };
-      reader.readAsText(file);
+      if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = (event.target?.result as string).split(',')[1];
+          uploadPDFMutation.mutate({
+            fileData: base64,
+            fileName: file.name,
+            bureau: bureau,
+          });
+        };
+        reader.readAsDataURL(file);
+        toast.info("Processing PDF...");
+      } else {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setReportText(event.target?.result as string);
+          toast.success("File loaded successfully!");
+        };
+        reader.readAsText(file);
+      }
     }
   };
 
@@ -81,7 +124,7 @@ export default function ReportUpload() {
       return;
     }
 
-    uploadMutation.mutate({
+    uploadTextMutation.mutate({
       reportText,
       bureau,
       reportedScore: reportedScore ? parseInt(reportedScore) : undefined,
@@ -120,7 +163,7 @@ export default function ReportUpload() {
             >
               <input
                 type="file"
-                accept=".txt"
+                accept=".txt,.pdf,application/pdf"
                 onChange={handleFileSelect}
                 className="hidden"
                 id="file-upload"
@@ -247,11 +290,11 @@ export default function ReportUpload() {
         <div className="flex gap-3">
           <Button
             onClick={handleSubmit}
-            disabled={uploadMutation.isPending || !reportText.trim()}
+            disabled={uploadTextMutation.isPending || uploadPDFMutation.isPending || !reportText.trim()}
             className="flex-1"
             size="lg"
           >
-            {uploadMutation.isPending ? (
+            {(uploadTextMutation.isPending || uploadPDFMutation.isPending) ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Processing Report...

@@ -482,3 +482,14 @@
 - [x] Copy and download generated letters
 - [x] New logo without grey background generated
 - [x] Menu item added to sidebar navigation
+
+
+## Phase 17: PDF Report Upload & End-to-End Testing
+- [x] Add PDF file upload support to ReportUpload page
+- [x] Integrate TransUnion PDF parser with upload endpoint
+- [x] Test with actual TransUnion credit report PDF
+- [ ] Improve PDF parser to better extract account details (currently extracts metadata)
+- [ ] Add pattern matching for account sections vs reference sections
+- [ ] Extract payment history tables from accounts
+- [ ] Identify negative items from payment status and remarks
+- [ ] Test dispute letter generation with parsed accounts
