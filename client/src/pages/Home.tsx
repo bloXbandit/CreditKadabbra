@@ -19,9 +19,13 @@ export default function Home() {
 
   return (
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
-      <div>
-        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">🥄 CreditKazzam 🥄</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">Track your credit journey and take control of your financial future</p>
+      <div className="flex flex-col items-center sm:items-start">
+        <img 
+          src="https://files.manuscdn.com/user_upload_by_module/session_file/112776905/dMUwZoHaORezHAPS.png" 
+          alt="CreditKazzam" 
+          className="h-16 sm:h-20 w-auto object-contain mb-3"
+        />
+        <p className="text-sm sm:text-base text-muted-foreground text-center sm:text-left">Track your credit journey and take control of your financial future</p>
       </div>
 
       {/* Credit Scores Overview */}

@@ -182,9 +182,11 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    🥄 CreditKazzam 🥄
-                  </span>
+                  <img 
+                    src="https://files.manuscdn.com/user_upload_by_module/session_file/112776905/dMUwZoHaORezHAPS.png" 
+                    alt="CreditKazzam" 
+                    className="h-8 w-auto object-contain"
+                  />
                 </div>
               ) : null}
             </div>
