@@ -32,7 +32,7 @@ const BUREAU_INFO = {
   equifax: {
     name: 'Equifax Information Services LLC',
     address: 'P.O. Box 740256',
-    cityStateZip: 'Atlanta, GA 30374',
+    cityStateZip: 'Atlanta, GA 30348',
   },
   experian: {
     name: 'Experian',
