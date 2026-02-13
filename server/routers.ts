@@ -248,6 +248,18 @@ export const appRouter = router({
         }
         return await db.updateDispute(id, updates);
       }),
+    checkTracking: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const { checkDisputeTracking } = await import('./uspsTrackingJob');
+        return await checkDisputeTracking(input.id);
+      }),
+    refreshAllTracking: protectedProcedure
+      .mutation(async () => {
+        const { checkUSPSTrackingStatus } = await import('./uspsTrackingJob');
+        await checkUSPSTrackingStatus();
+        return { success: true };
+      }),
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {

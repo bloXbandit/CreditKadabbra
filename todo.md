@@ -537,4 +537,30 @@
 - [x] Display calculated 30-day deadline in disputes list
 - [x] Add visual indicators for approaching/overdue deadlines
 - [x] Test all features end-to-end
+- [x] Push to GitHub repository
+
+
+## Phase 21: USPS Tracking API Integration
+- [ ] Research USPS Tracking API documentation and authentication
+- [ ] Create USPS tracking service with API integration
+- [ ] Add tracking status check function (delivered, in transit, etc.)
+- [ ] Implement scheduled job to check tracking status daily
+- [ ] Auto-update dispute status when delivery is confirmed
+- [ ] Add delivery confirmation date to disputes
+- [ ] Update disputes UI to show delivery status
+- [ ] Handle API errors and rate limits gracefully
+- [ ] Test with sample tracking numbers
+- [ ] Push to GitHub repository
+
+
+## Phase 21: USPS Tracking API Integration
+- [x] Research USPS Web Tools API and Track & Confirm endpoint
+- [x] Create USPS tracking service with API integration
+- [x] Implement XML request/response parsing for USPS API
+- [x] Add mock tracking data for testing without API credentials
+- [x] Create scheduled job to check tracking status every 6 hours
+- [x] Auto-update dispute status to 'in_progress' when delivered
+- [x] Add tRPC endpoints for manual tracking refresh
+- [x] Request USPS_USER_ID secret from user
+- [x] Test USPS integration with mock data
 - [ ] Push to GitHub repository
