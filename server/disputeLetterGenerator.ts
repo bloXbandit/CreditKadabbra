@@ -33,16 +33,22 @@ const BUREAU_INFO = {
     name: 'Equifax Information Services LLC',
     address: 'P.O. Box 740256',
     cityStateZip: 'Atlanta, GA 30348',
+    phone: '866-349-5191',
+    website: 'www.equifax.com/personal/credit-report-services',
   },
   experian: {
     name: 'Experian',
     address: 'P.O. Box 4500',
     cityStateZip: 'Allen, TX 75013',
+    phone: '888-397-3742',
+    website: 'www.experian.com/disputes',
   },
   transunion: {
     name: 'TransUnion LLC',
     address: 'Consumer Dispute Center',
     cityStateZip: 'P.O. Box 2000, Chester, PA 19016',
+    phone: '800-916-8800',
+    website: 'www.transunion.com/credit-disputes',
   },
 };
 
@@ -101,7 +107,12 @@ Sincerely,
 
 ${userInfo.name}
 
-Enclosures: Supporting Documentation`;
+Enclosures: Supporting Documentation
+
+---
+For your reference:
+Phone: ${bureauInfo.phone}
+Online Disputes: ${bureauInfo.website}`;
 
   return letter;
 }

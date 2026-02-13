@@ -43,6 +43,13 @@
       "when": 1770821713298,
       "tag": "0005_fearless_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1770965329157,
+      "tag": "0006_opposite_james_howlett",
+      "breakpoints": true
     }
   ]
 }

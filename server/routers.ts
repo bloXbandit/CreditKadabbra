@@ -231,12 +231,21 @@ export const appRouter = router({
         dateResolved: z.string().optional(),
         outcome: z.string().optional(),
         notes: z.string().optional(),
+        certifiedMailTracking: z.string().optional(),
+        mailingDate: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const { id, ...rest } = input;
         const updates: any = { ...rest };
         if (updates.dateSent) updates.dateSent = updates.dateSent as any;
         if (updates.dateResolved) updates.dateResolved = updates.dateResolved as any;
+        if (updates.mailingDate) {
+          updates.mailingDate = updates.mailingDate as any;
+          // Auto-calculate 30-day deadline
+          const { calculate30DayDeadline } = await import('./deadlineCalculator');
+          const deadline = calculate30DayDeadline(new Date(updates.mailingDate));
+          updates.responseDeadline = deadline.toISOString().split('T')[0];
+        }
         return await db.updateDispute(id, updates);
       }),
     delete: protectedProcedure

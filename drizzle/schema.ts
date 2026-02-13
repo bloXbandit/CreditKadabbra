@@ -143,6 +143,9 @@ export const disputes = mysqlTable("disputes", {
   dateResolved: date("dateResolved"),
   outcome: text("outcome"),
   notes: text("notes"),
+  certifiedMailTracking: varchar("certifiedMailTracking", { length: 100 }),
+  mailingDate: date("mailingDate"),
+  responseDeadline: date("responseDeadline"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

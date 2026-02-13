@@ -522,3 +522,19 @@
 - [x] Templates: Mixed file dispute, Inquiry removal, Bankruptcy re-aging, Account closure dispute
 - [x] Add template selector to dispute letter generator UI
 - [x] Test all import methods (manual entry, PDF, CSV) end-to-end
+
+
+## Phase 20: Bureau Contact Info & Certified Mail Tracking
+- [x] Add phone numbers to bureau information (Equifax: 866-349-5191, Experian: 888-397-3742, TransUnion: 800-916-8800)
+- [x] Add online dispute URLs to bureau information
+- [x] Update dispute letter templates to include phone and website
+- [x] Add certified mail tracking number field to disputes schema
+- [x] Add mailing date field to disputes schema
+- [x] Implement automatic 30-day deadline calculation from mailing date
+- [x] Add deadline field to disputes schema
+- [x] Update disputes UI to show tracking number input
+- [x] Update disputes UI to show mailing date picker
+- [x] Display calculated 30-day deadline in disputes list
+- [x] Add visual indicators for approaching/overdue deadlines
+- [x] Test all features end-to-end
+- [ ] Push to GitHub repository
